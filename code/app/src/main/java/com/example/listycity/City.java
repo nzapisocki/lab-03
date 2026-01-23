@@ -9,6 +9,13 @@ public class City {
         this.province = province;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setProvince(String province){
+        this.province = province;
+    }
     public String getName() {
         return name;
     }

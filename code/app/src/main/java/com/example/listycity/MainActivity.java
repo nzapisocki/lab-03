@@ -1,7 +1,8 @@
 package com.example.listycity;
 
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,24 +10,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements
         AddCityFragment.AddCityDialogListener {
     private ArrayList<City> dataList;
     private ListView cityList;
     private CityArrayAdapter cityAdapter;
+
     @Override
     public void addCity(City city) {
         cityAdapter.add(city);
         cityAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void updateCity(int position, City city) {
+        dataList.set(position, city);
+        cityAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String[] cities = { "Edmonton", "Vancouver", "Toronto" };
-        String[] provinces = { "AB", "BC", "ON" };
+        String[] cities = {"Edmonton", "Vancouver", "Toronto"};
+        String[] provinces = {"AB", "BC", "ON"};
         dataList = new ArrayList<>();
         for (int i = 0; i < cities.length; i++) {
             dataList.add(new City(cities[i], provinces[i]));
@@ -38,5 +46,31 @@ public class MainActivity extends AppCompatActivity implements
         fab.setOnClickListener(v -> {
             new AddCityFragment().show(getSupportFragmentManager(), "Add City");
         });
+
+        // listview click activity
+        // Create a message handling object as an anonymous class.
+        AdapterView.OnItemClickListener messageClickedHandler = new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+                // Do something in response to the click.
+                City clickedCity = dataList.get(position);
+
+                AddCityFragment editFragment = new AddCityFragment();
+
+                Bundle args = new Bundle();
+                args.putString("name", clickedCity.getName());
+                args.putString("province", clickedCity.getProvince());
+                args.putInt("position", position);
+                editFragment.setArguments(args);
+
+                editFragment.show(getSupportFragmentManager(), "Edit City");
+
+
+            }
+        };
+
+        cityList.setOnItemClickListener(messageClickedHandler);
+
+
     }
+
 }
